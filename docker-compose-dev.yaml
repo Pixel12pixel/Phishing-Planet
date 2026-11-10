@@ -1,0 +1,59 @@
+services:
+  maddy:
+    image: foxcpp/maddy:0.9.7
+    container_name: maddy
+    restart: unless-stopped
+    hostname: mail.phishing.local
+    entrypoint: /bin/sh
+    command: /entrypoint.sh
+    environment:
+      MADDY_HOSTNAME: mail.phishing.local
+      MADDY_DOMAIN: phishing.local
+      MADDY_USER: user@phishing.local
+      MADDY_PASSWORD: Zaq12wsx
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+    volumes:
+      - maddy_data:/data
+      - ./maddy-entrypoint-dev.sh:/entrypoint.sh:ro
+
+  maddy-peer:
+    image: foxcpp/maddy:0.9.7
+    container_name: maddy-peer
+    restart: unless-stopped
+    hostname: mail.peer.test
+    entrypoint: /bin/sh
+    command: /entrypoint.sh
+    environment:
+      MADDY_HOSTNAME: mail.peer.test
+      MADDY_DOMAIN: peer.test
+      MADDY_USER: user@peer.test
+      MADDY_PASSWORD: Zaq12wsx
+    volumes:
+      - maddy_peer_data:/data
+      - ./maddy-entrypoint-dev.sh:/entrypoint.sh:ro
+
+  roundcube-peer:
+    image: roundcube/roundcubemail:1.6.x-apache
+    container_name: roundcube-peer
+    restart: unless-stopped
+    depends_on:
+      - maddy-peer
+    ports:
+      - "8081:80"
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: maddy-peer
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_SERVER: maddy-peer
+      ROUNDCUBEMAIL_SMTP_PORT: 587
+      ROUNDCUBEMAIL_DB_TYPE: sqlite
+      ROUNDCUBEMAIL_DB_DIR: /var/roundcube/db
+    volumes:
+      - roundcube_peer_db:/var/roundcube/db
+
+volumes:
+  maddy_data:
+  maddy_peer_data:
+  roundcube_peer_db:
