@@ -81,6 +81,7 @@ builder.Services
     .ValidateOnStart();
 
 builder.Services.AddSingleton<IEmailPresenter, EmailConsolePresenter>();
+builder.Services.AddSingleton<IMailSenderService, MailSenderService>();
 
 builder.Services.AddHostedService<EmailWatcherService>();
 

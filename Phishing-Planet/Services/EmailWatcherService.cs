@@ -13,6 +13,7 @@ namespace Phishing_Planet.Services;
 public sealed class EmailWatcherService(
     IOptions<MailWatcherOptions> options,
     IEmailPresenter presenter,
+    IMailSenderService mailSender,
     ILogger<EmailWatcherService> logger)
     : BackgroundService
 {
@@ -48,6 +49,13 @@ public sealed class EmailWatcherService(
 
                     var message = await client.Inbox.GetMessageAsync(uid, stoppingToken);
                     presenter.ShowEmail(message);
+                    
+                    const string plainTextReport = "Test.";
+                    const string htmlReport = """
+                                              <h2>Test</h2>
+                                              """;
+
+                    await mailSender.SendReplyReportAsync(message, plainTextReport, htmlReport, stoppingToken);
                 }
 
                 await client.DisconnectAsync(true, stoppingToken);

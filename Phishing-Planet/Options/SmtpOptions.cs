@@ -8,5 +8,7 @@ public sealed class SmtpOptions
     public required int Port { get; set; }
     public required string Username { get; set; }
     public required string Password { get; set; }
-    public required string TargetEmail { get; set; }
+    public string SenderName { get; set; } = "Phishing-Planet Analyze";
+    public bool UseTls { get; set; }
+    public string? TargetEmail { get; set; }
 }
