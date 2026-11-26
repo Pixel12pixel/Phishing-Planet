@@ -6,12 +6,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Phishing_Planet.Options;
+using Phishing_Planet.Parsing;
 using Phishing_Planet.Presentation;
 
 namespace Phishing_Planet.Services;
 
 public sealed class EmailWatcherService(
     IOptions<MailWatcherOptions> options,
+    IEmailParser emailParser,
     IEmailPresenter presenter,
     IMailSenderService mailSender,
     ILogger<EmailWatcherService> logger)
@@ -48,7 +50,9 @@ public sealed class EmailWatcherService(
                         continue;
 
                     var message = await client.Inbox.GetMessageAsync(uid, stoppingToken);
+                    var parsed = await emailParser.ParseAsync(message, stoppingToken);
                     presenter.ShowEmail(message);
+                    presenter.ShowParsedEmail(parsed);
                     
                     const string plainTextReport = "Test.";
                     const string htmlReport = """

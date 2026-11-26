@@ -6,6 +6,7 @@ using Phishing_Planet.Services;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Phishing_Planet.Parsing;
 using Phishing_Planet.VirusTotal;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -82,6 +83,7 @@ builder.Services
 
 builder.Services.AddSingleton<IEmailPresenter, EmailConsolePresenter>();
 builder.Services.AddSingleton<IMailSenderService, MailSenderService>();
+builder.Services.AddSingleton<IEmailParser, EmailParser>();
 
 builder.Services.AddHostedService<EmailWatcherService>();
 
