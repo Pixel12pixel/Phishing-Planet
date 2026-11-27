@@ -84,6 +84,7 @@ builder.Services
 builder.Services.AddSingleton<IEmailPresenter, EmailConsolePresenter>();
 builder.Services.AddSingleton<IMailSenderService, MailSenderService>();
 builder.Services.AddSingleton<IEmailParser, EmailParser>();
+builder.Services.AddSingleton<IPhishingAnalyzer, PhishingAnalyzer>();
 
 builder.Services.AddHostedService<EmailWatcherService>();
 

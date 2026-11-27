@@ -16,7 +16,8 @@ public sealed class EmailWatcherService(
     IEmailParser emailParser,
     IEmailPresenter presenter,
     IMailSenderService mailSender,
-    ILogger<EmailWatcherService> logger)
+    ILogger<EmailWatcherService> logger,
+    IPhishingAnalyzer phishingAnalyzer)
     : BackgroundService
 {
     private readonly MailWatcherOptions _options = options.Value;
@@ -53,6 +54,9 @@ public sealed class EmailWatcherService(
                     var parsed = await emailParser.ParseAsync(message, stoppingToken);
                     presenter.ShowEmail(message);
                     presenter.ShowParsedEmail(parsed);
+                    
+                    var hauristicValue = phishingAnalyzer.Analyze(message);
+                    Console.WriteLine($"Phishing score: {hauristicValue} / 100");
                     
                     const string plainTextReport = "Test.";
                     const string htmlReport = """
